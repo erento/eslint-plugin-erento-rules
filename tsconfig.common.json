@@ -1,0 +1,36 @@
+{
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "**/node_modules/**",
+    "**/*.test-data.ts",
+    "dist"
+  ],
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "commonjs",
+    "lib": ["es2020"],
+    "declaration": true,
+    "outDir": "dist",
+    "removeComments": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "inlineSourceMap": true,
+    "inlineSources": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}

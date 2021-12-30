@@ -1,0 +1,55 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+**/dist
+/tmp
+/out-tsc
+
+# compiled icon fonts
+**/assets/fonts/icon*
+**/styles/fonts/icon.scss
+**/tools/icon-font/**
+!**/tools/icon-font/scss.template.hbs
+!**/tools/icon-font/.fantasticonrc.js
+
+# Only exists if Bazel was run
+/bazel-out
+
+# dependencies
+**/node_modules
+
+# profiling files
+chrome-profiler-events*.json
+speed-measure-plugin*.json
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+.history/*
+
+# misc
+/.angular/cache
+/.sass-cache
+/.jest_cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+/tools/translations/output/*.json
+
+# System Files
+.DS_Store
+Thumbs.db
+testresults
+*.tmp
