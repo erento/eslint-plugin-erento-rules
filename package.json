@@ -9,6 +9,7 @@
     "package.json",
     "README.md"
   ],
+  "private": false,
   "scripts": {
     "clean": "rm -Rf ./dist/",
     "lint": "eslint src/**/*.ts",
@@ -16,7 +17,7 @@
     "build": "npm run lint && npm run clean && mkdir ./dist && tsc --project tsconfig.build.json"
   },
   "keywords": [],
-  "license": "ISC",
+  "license": "MIT",
   "author": "Erento GmbH <developers@erento.com> (https://www.erento.com)",
   "peerDependencies": {
     "@angular-eslint/eslint-plugin": ">=13.0.1",

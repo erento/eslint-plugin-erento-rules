@@ -53,3 +53,5 @@ testem.log
 Thumbs.db
 testresults
 *.tmp
+
+erento-eslint-plugin-erento-rules-*.tgz
