@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.common",
+  "exclude": [
+    "node_modules",
+    "**/node_modules/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test-data.ts",
+    "dist"
+  ]
+}
