@@ -1,4 +1,5 @@
-import {convertAnnotatedSourceToFailureCase, RuleTester} from '@angular-eslint/utils';
+import {convertAnnotatedSourceToFailureCase} from '@angular-eslint/utils';
+import {RuleTester} from '@typescript-eslint/utils/dist/eslint-utils';
 import {injectableOrderRule, MessageIds, RULE_NAME} from './injectable-order';
 
 const ruleTester = new RuleTester({
