@@ -1,13 +1,13 @@
-import {AST_NODE_TYPES} from '@typescript-eslint/experimental-utils';
-import {RuleFixer, SourceCode} from '@typescript-eslint/experimental-utils/dist/ts-eslint';
-import {Parameter} from '@typescript-eslint/types/dist/ast-spec';
+import {Parameter} from '@typescript-eslint/types/dist/generated/ast-spec';
+import {AST_NODE_TYPES} from '@typescript-eslint/utils';
+import {RuleFixer, SourceCode} from '@typescript-eslint/utils/dist/ts-eslint';
 import {createRule} from '../utils/create-rule';
 
 export const RULE_NAME = 'injectable-order';
 export type MessageIds = 'wrongOrder';
-type Options = [];
+type Options = readonly unknown [];
 
-// Readonly section is not needed for public/protected/private as it will be sorted always behind it by alphabetic sorting.
+// Readonly section is not needed for public/protected/private as it will always be sorted behind it by alphabetic sorting.
 interface VisibilitySections {
     visibilityEmpty: Parameter[];
     visibilityEmptyReadonly: Parameter[];
