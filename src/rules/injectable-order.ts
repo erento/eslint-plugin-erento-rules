@@ -99,28 +99,31 @@ const assignNodesToSections = (visibilitySections: VisibilitySections, param: Pa
             return visibilitySections;
         }
         switch (param.accessibility) {
-            case 'private':
+            case 'private': {
                 if (param.readonly) {
                     visibilitySections.visibilityPrivateReadonly.push(param);
                 } else {
                     visibilitySections.visibilityPrivate.push(param);
                 }
                 break;
-            case 'protected':
+            }
+            case 'protected': {
                 if (param.readonly) {
                     visibilitySections.visibilityProtectedReadonly.push(param);
                 } else {
                     visibilitySections.visibilityProtected.push(param);
                 }
                 break;
+            }
             case 'public':
-            default:
+            default: {
                 if (param.readonly) {
                     visibilitySections.visibilityPublicReadonly.push(param);
                 } else {
                     visibilitySections.visibilityPublic.push(param);
                 }
                 break;
+            }
         }
     }
     if (param.type === AST_NODE_TYPES.Identifier) {
