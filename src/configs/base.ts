@@ -157,7 +157,7 @@ export const baseConfig = {
             600,
         ],
         'multiline-ternary': ['error', 'always-multiline'],
-        'newline-per-chained-call': 'error',
+        'newline-per-chained-call': ['error', {ignoreChainWithDepth: 1}],
         'no-confusing-arrow': 'error',
         'no-duplicate-imports': 'error',
         'no-else-return': 'error',
@@ -253,7 +253,7 @@ export const baseConfig = {
         'unicorn/prefer-ternary': 'error',
         'unicorn/require-array-join-separator': 'error',
         'unicorn/require-number-to-fixed-digits-argument': 'error',
-        'unicorn/switch-case-braces': 'error',
+        'unicorn/switch-case-braces': ['error', 'avoid'],
         'unicorn/throw-new-error': 'error',
     },
 };
