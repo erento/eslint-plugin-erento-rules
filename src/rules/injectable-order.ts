@@ -106,6 +106,7 @@ const assignNodesToSections = (visibilitySections: VisibilitySections, param: Pa
                     visibilitySections.visibilityPrivate.push(param);
                 }
                 break;
+
             case 'protected':
                 if (param.readonly) {
                     visibilitySections.visibilityProtectedReadonly.push(param);
@@ -113,6 +114,7 @@ const assignNodesToSections = (visibilitySections: VisibilitySections, param: Pa
                     visibilitySections.visibilityProtected.push(param);
                 }
                 break;
+
             case 'public':
             default:
                 if (param.readonly) {
