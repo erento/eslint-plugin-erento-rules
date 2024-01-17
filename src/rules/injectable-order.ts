@@ -1,5 +1,4 @@
-import {Parameter} from '@typescript-eslint/types/dist/generated/ast-spec';
-import {AST_NODE_TYPES} from '@typescript-eslint/utils';
+import {AST_NODE_TYPES, Parameter} from '@typescript-eslint/types/dist/generated/ast-spec';
 import {RuleFixer, SourceCode} from '@typescript-eslint/utils/dist/ts-eslint';
 import {createRule} from '../utils/create-rule';
 
@@ -19,19 +18,17 @@ interface VisibilitySections {
     visibilityPrivateReadonly: Parameter[];
 }
 
-const allowedDecorators = [
+const allowedDecorators = new Set([
     // the list is intentionally lowercase
     'component',
     'directive',
     'injectable',
     'pipe',
-];
+]);
 
 const SEPARATOR = '|';
 
-const hasAllowedDecorator = (componentName: string) => allowedDecorators.some(
-    allowedDecorator => allowedDecorator === componentName.toLowerCase(),
-);
+const hasAllowedDecorator = (componentName: string) => allowedDecorators.has(componentName.toLowerCase());
 
 const getParamName = (param: any, withAttributes: boolean = false) => {
     const attributes = withAttributes ? getParamAttributes(param) : '';
@@ -48,14 +45,16 @@ const sortParam = (a: Parameter, b: Parameter) => {
 };
 
 const getConcatenatedListAsString = (list: VisibilitySections) => {
-    const parameters = list.visibilityEmpty.sort(sortParam)
-        .concat(list.visibilityEmptyReadonly.sort(sortParam))
-        .concat(list.visibilityPublic.sort(sortParam))
-        .concat(list.visibilityPublicReadonly.sort(sortParam))
-        .concat(list.visibilityProtected.sort(sortParam))
-        .concat(list.visibilityProtectedReadonly.sort(sortParam))
-        .concat(list.visibilityPrivate.sort(sortParam))
-        .concat(list.visibilityPrivateReadonly.sort(sortParam));
+    const parameters = [
+        ...list.visibilityEmpty.sort(sortParam),
+        ...list.visibilityEmptyReadonly.sort(sortParam),
+        ...list.visibilityPublic.sort(sortParam),
+        ...list.visibilityPublicReadonly.sort(sortParam),
+        ...list.visibilityProtected.sort(sortParam),
+        ...list.visibilityProtectedReadonly.sort(sortParam),
+        ...list.visibilityPrivate.sort(sortParam),
+        ...list.visibilityPrivateReadonly.sort(sortParam),
+    ];
 
     return stringify(
         parameters.map(param => getParamName(param, true)),
@@ -140,7 +139,7 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
         docs: {
             description: 'Enforces ASC alphabetical order for all constructor parameters on ' +
                 '@Injectable(), @Component() etc. for easy visual scanning',
-            recommended: 'error',
+            recommended: 'stylistic',
             requiresTypeChecking: false,
         },
         fixable: 'code',
@@ -148,14 +147,14 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
             wrongOrder: 'Constructor parameters should be sorted in ASC alphabetical order.',
         },
         type: 'suggestion',
-        schema: {},
+        schema: [],
     },
     defaultOptions: [],
     create: context => {
         return {
             ClassDeclaration (node) {
                 const isDecorated = (node.decorators || []).some(
-                    decorator => decorator.type === AST_NODE_TYPES.Decorator &&
+                    (decorator: any) => decorator.type === AST_NODE_TYPES.Decorator &&
                         decorator.expression.type === AST_NODE_TYPES.CallExpression &&
                         decorator.expression.callee.type === AST_NODE_TYPES.Identifier &&
                         hasAllowedDecorator(decorator.expression.callee.name),
@@ -165,7 +164,7 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
                 }
 
                 const constructorNode = node.body.body.find(
-                    bodyNode => bodyNode.type === AST_NODE_TYPES.MethodDefinition &&
+                    (bodyNode: any) => bodyNode.type === AST_NODE_TYPES.MethodDefinition &&
                         bodyNode.key.type === AST_NODE_TYPES.Identifier &&
                         bodyNode.key.name === 'constructor',
                 );
@@ -183,8 +182,8 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
                     const unorderedNodes = constructorNode
                         .value
                         .params
-                        .map((current, index, list): [Parameter, Parameter] => [current, list[index + 1]])
-                        .find(([currentNode, nextNode]) => {
+                        .map((current: any, index: number, list: any[]): [Parameter, Parameter] => [current, list[index + 1]])
+                        .find(([currentNode, nextNode]: [any, any]) => {
                             if (!nextNode) {
                                 return false;
                             }
