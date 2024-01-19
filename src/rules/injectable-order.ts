@@ -1,5 +1,5 @@
-import {AST_NODE_TYPES, Parameter} from '@typescript-eslint/types/dist/generated/ast-spec';
-import {RuleFixer, SourceCode} from '@typescript-eslint/utils/dist/ts-eslint';
+import {AST_NODE_TYPES, TSESTree} from '@typescript-eslint/types';
+import * as TSESLint from '@typescript-eslint/utils/ts-eslint';
 import {createRule} from '../utils/create-rule';
 
 export const RULE_NAME = 'injectable-order';
@@ -8,14 +8,14 @@ type Options = readonly unknown [];
 
 // Readonly section is not needed for public/protected/private as it will always be sorted behind it by alphabetic sorting.
 interface VisibilitySections {
-    visibilityEmpty: Parameter[];
-    visibilityEmptyReadonly: Parameter[];
-    visibilityPublic: Parameter[];
-    visibilityPublicReadonly: Parameter[];
-    visibilityProtected: Parameter[];
-    visibilityProtectedReadonly: Parameter[];
-    visibilityPrivate: Parameter[];
-    visibilityPrivateReadonly: Parameter[];
+    visibilityEmpty: TSESTree.Parameter[];
+    visibilityEmptyReadonly: TSESTree.Parameter[];
+    visibilityPublic: TSESTree.Parameter[];
+    visibilityPublicReadonly: TSESTree.Parameter[];
+    visibilityProtected: TSESTree.Parameter[];
+    visibilityProtectedReadonly: TSESTree.Parameter[];
+    visibilityPrivate: TSESTree.Parameter[];
+    visibilityPrivateReadonly: TSESTree.Parameter[];
 }
 
 const allowedDecorators = new Set([
@@ -37,7 +37,7 @@ const getParamName = (param: any, withAttributes: boolean = false) => {
     return `${attributes} ${paramName}`.trim();
 };
 
-const sortParam = (a: Parameter, b: Parameter) => {
+const sortParam = (a: TSESTree.Parameter, b: TSESTree.Parameter) => {
     const nameA = getParamName(a);
     const nameB = getParamName(b);
 
@@ -74,7 +74,7 @@ const getEmptyVisibilitySections = (): VisibilitySections => {
     };
 };
 
-const getParamAttributes = (param: Parameter) => {
+const getParamAttributes = (param: TSESTree.Parameter) => {
     let accessibility = '';
     let isReadonly = false;
 
@@ -90,7 +90,7 @@ const getParamAttributes = (param: Parameter) => {
     return `${accessibility}${isReadonly ? ' readonly' : ''}`.trim();
 };
 
-const assignNodesToSections = (visibilitySections: VisibilitySections, param: Parameter) => {
+const assignNodesToSections = (visibilitySections: VisibilitySections, param: TSESTree.Parameter) => {
     if (param.type === AST_NODE_TYPES.TSParameterProperty) {
         if (param.accessibility === undefined && param.readonly) {
             visibilitySections.visibilityEmptyReadonly.push(param);
@@ -150,7 +150,7 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
         schema: [],
     },
     defaultOptions: [],
-    create: context => {
+    create: (context: any) => {
         return {
             ClassDeclaration (node) {
                 const isDecorated = (node.decorators || []).some(
@@ -182,8 +182,8 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
                     const unorderedNodes = constructorNode
                         .value
                         .params
-                        .map((current: any, index: number, list: any[]): [Parameter, Parameter] => [current, list[index + 1]])
-                        .find(([currentNode, nextNode]: [any, any]) => {
+                        .map((current: any, index: number, list: any[]) => [current, list[index + 1]])
+                        .find(([currentNode, nextNode]) => {
                             if (!nextNode) {
                                 return false;
                             }
@@ -201,12 +201,12 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
                     if (!unorderedNodes) {
                         return;
                     }
-                    const sourceCode: SourceCode = context.getSourceCode();
+                    const sourceCode: TSESLint.SourceCode = context.getSourceCode();
                     const [unorderedNode, unorderedNextNode] = unorderedNodes;
                     context.report({
                         node: unorderedNode,
                         messageId: 'wrongOrder',
-                        fix: (fixer: RuleFixer) => [
+                        fix: (fixer: TSESLint.RuleFixer) => [
                             fixer.replaceText(unorderedNode, sourceCode.getText(unorderedNextNode)),
                             fixer.replaceText(unorderedNextNode, sourceCode.getText(unorderedNode)),
                         ],
