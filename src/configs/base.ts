@@ -115,7 +115,7 @@ export const baseConfig = {
                 after: false,
             },
         ],
-        '@stylistic/indent': [
+        '@stylistic/js/indent': [
             'error',
             4,
             {
