@@ -1,6 +1,5 @@
-import {Parameter} from '@typescript-eslint/types/dist/generated/ast-spec';
-import {AST_NODE_TYPES} from '@typescript-eslint/utils';
-import {RuleFixer, SourceCode} from '@typescript-eslint/utils/dist/ts-eslint';
+import {AST_NODE_TYPES, TSESTree} from '@typescript-eslint/types';
+import * as TSESLint from '@typescript-eslint/utils/ts-eslint';
 import {createRule} from '../utils/create-rule';
 
 export const RULE_NAME = 'injectable-order';
@@ -9,29 +8,27 @@ type Options = readonly unknown [];
 
 // Readonly section is not needed for public/protected/private as it will always be sorted behind it by alphabetic sorting.
 interface VisibilitySections {
-    visibilityEmpty: Parameter[];
-    visibilityEmptyReadonly: Parameter[];
-    visibilityPublic: Parameter[];
-    visibilityPublicReadonly: Parameter[];
-    visibilityProtected: Parameter[];
-    visibilityProtectedReadonly: Parameter[];
-    visibilityPrivate: Parameter[];
-    visibilityPrivateReadonly: Parameter[];
+    visibilityEmpty: TSESTree.Parameter[];
+    visibilityEmptyReadonly: TSESTree.Parameter[];
+    visibilityPublic: TSESTree.Parameter[];
+    visibilityPublicReadonly: TSESTree.Parameter[];
+    visibilityProtected: TSESTree.Parameter[];
+    visibilityProtectedReadonly: TSESTree.Parameter[];
+    visibilityPrivate: TSESTree.Parameter[];
+    visibilityPrivateReadonly: TSESTree.Parameter[];
 }
 
-const allowedDecorators = [
+const allowedDecorators = new Set([
     // the list is intentionally lowercase
     'component',
     'directive',
     'injectable',
     'pipe',
-];
+]);
 
 const SEPARATOR = '|';
 
-const hasAllowedDecorator = (componentName: string) => allowedDecorators.some(
-    allowedDecorator => allowedDecorator === componentName.toLowerCase(),
-);
+const hasAllowedDecorator = (componentName: string) => allowedDecorators.has(componentName.toLowerCase());
 
 const getParamName = (param: any, withAttributes: boolean = false) => {
     const attributes = withAttributes ? getParamAttributes(param) : '';
@@ -40,7 +37,7 @@ const getParamName = (param: any, withAttributes: boolean = false) => {
     return `${attributes} ${paramName}`.trim();
 };
 
-const sortParam = (a: Parameter, b: Parameter) => {
+const sortParam = (a: TSESTree.Parameter, b: TSESTree.Parameter) => {
     const nameA = getParamName(a);
     const nameB = getParamName(b);
 
@@ -48,14 +45,16 @@ const sortParam = (a: Parameter, b: Parameter) => {
 };
 
 const getConcatenatedListAsString = (list: VisibilitySections) => {
-    const parameters = list.visibilityEmpty.sort(sortParam)
-        .concat(list.visibilityEmptyReadonly.sort(sortParam))
-        .concat(list.visibilityPublic.sort(sortParam))
-        .concat(list.visibilityPublicReadonly.sort(sortParam))
-        .concat(list.visibilityProtected.sort(sortParam))
-        .concat(list.visibilityProtectedReadonly.sort(sortParam))
-        .concat(list.visibilityPrivate.sort(sortParam))
-        .concat(list.visibilityPrivateReadonly.sort(sortParam));
+    const parameters = [
+        ...list.visibilityEmpty.sort(sortParam),
+        ...list.visibilityEmptyReadonly.sort(sortParam),
+        ...list.visibilityPublic.sort(sortParam),
+        ...list.visibilityPublicReadonly.sort(sortParam),
+        ...list.visibilityProtected.sort(sortParam),
+        ...list.visibilityProtectedReadonly.sort(sortParam),
+        ...list.visibilityPrivate.sort(sortParam),
+        ...list.visibilityPrivateReadonly.sort(sortParam),
+    ];
 
     return stringify(
         parameters.map(param => getParamName(param, true)),
@@ -75,7 +74,7 @@ const getEmptyVisibilitySections = (): VisibilitySections => {
     };
 };
 
-const getParamAttributes = (param: Parameter) => {
+const getParamAttributes = (param: TSESTree.Parameter) => {
     let accessibility = '';
     let isReadonly = false;
 
@@ -91,7 +90,7 @@ const getParamAttributes = (param: Parameter) => {
     return `${accessibility}${isReadonly ? ' readonly' : ''}`.trim();
 };
 
-const assignNodesToSections = (visibilitySections: VisibilitySections, param: Parameter) => {
+const assignNodesToSections = (visibilitySections: VisibilitySections, param: TSESTree.Parameter) => {
     if (param.type === AST_NODE_TYPES.TSParameterProperty) {
         if (param.accessibility === undefined && param.readonly) {
             visibilitySections.visibilityEmptyReadonly.push(param);
@@ -140,7 +139,7 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
         docs: {
             description: 'Enforces ASC alphabetical order for all constructor parameters on ' +
                 '@Injectable(), @Component() etc. for easy visual scanning',
-            recommended: 'error',
+            recommended: 'stylistic',
             requiresTypeChecking: false,
         },
         fixable: 'code',
@@ -148,14 +147,14 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
             wrongOrder: 'Constructor parameters should be sorted in ASC alphabetical order.',
         },
         type: 'suggestion',
-        schema: {},
+        schema: [],
     },
     defaultOptions: [],
-    create: context => {
+    create: (context: any) => {
         return {
             ClassDeclaration (node) {
                 const isDecorated = (node.decorators || []).some(
-                    decorator => decorator.type === AST_NODE_TYPES.Decorator &&
+                    (decorator: any) => decorator.type === AST_NODE_TYPES.Decorator &&
                         decorator.expression.type === AST_NODE_TYPES.CallExpression &&
                         decorator.expression.callee.type === AST_NODE_TYPES.Identifier &&
                         hasAllowedDecorator(decorator.expression.callee.name),
@@ -165,7 +164,7 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
                 }
 
                 const constructorNode = node.body.body.find(
-                    bodyNode => bodyNode.type === AST_NODE_TYPES.MethodDefinition &&
+                    (bodyNode: any) => bodyNode.type === AST_NODE_TYPES.MethodDefinition &&
                         bodyNode.key.type === AST_NODE_TYPES.Identifier &&
                         bodyNode.key.name === 'constructor',
                 );
@@ -183,7 +182,7 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
                     const unorderedNodes = constructorNode
                         .value
                         .params
-                        .map((current, index, list): [Parameter, Parameter] => [current, list[index + 1]])
+                        .map((current: any, index: number, list: any[]) => [current, list[index + 1]])
                         .find(([currentNode, nextNode]) => {
                             if (!nextNode) {
                                 return false;
@@ -202,12 +201,12 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
                     if (!unorderedNodes) {
                         return;
                     }
-                    const sourceCode: SourceCode = context.getSourceCode();
+                    const sourceCode: TSESLint.SourceCode = context.getSourceCode();
                     const [unorderedNode, unorderedNextNode] = unorderedNodes;
                     context.report({
                         node: unorderedNode,
                         messageId: 'wrongOrder',
-                        fix: (fixer: RuleFixer) => [
+                        fix: (fixer: TSESLint.RuleFixer) => [
                             fixer.replaceText(unorderedNode, sourceCode.getText(unorderedNextNode)),
                             fixer.replaceText(unorderedNextNode, sourceCode.getText(unorderedNode)),
                         ],

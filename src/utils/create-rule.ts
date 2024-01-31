@@ -1,3 +1,3 @@
-import {RuleCreator} from '@typescript-eslint/utils/dist/eslint-utils';
+import * as ESLintUtils from '@typescript-eslint/utils/eslint-utils';
 
-export const createRule = RuleCreator(ruleName => `Documentation for a rule: "${ruleName}"`);
+export const createRule = ESLintUtils.RuleCreator((ruleName: any) => `Documentation for a rule: "${ruleName}"`);
