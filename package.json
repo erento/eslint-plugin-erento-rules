@@ -1,6 +1,6 @@
 {
   "name": "@erento/eslint-plugin-erento-rules",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
