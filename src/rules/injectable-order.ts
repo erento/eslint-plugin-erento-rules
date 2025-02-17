@@ -139,8 +139,6 @@ export const injectableOrderRule = createRule<Options, MessageIds>({
         docs: {
             description: 'Enforces ASC alphabetical order for all constructor parameters on ' +
                 '@Injectable(), @Component() etc. for easy visual scanning',
-            recommended: 'stylistic',
-            requiresTypeChecking: false,
         },
         fixable: 'code',
         messages: {

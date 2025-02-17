@@ -51,7 +51,6 @@ export const baseConfig = {
         '@angular-eslint/no-conflicting-lifecycle': 'error',
         '@angular-eslint/no-empty-lifecycle-method': 'error',
         '@angular-eslint/no-forward-ref': 'error',
-        '@angular-eslint/no-host-metadata-property': 'error',
         '@angular-eslint/no-input-prefix': 'error',
         '@angular-eslint/no-input-rename': 'error',
         '@angular-eslint/no-inputs-metadata-property': 'error',
@@ -66,7 +65,6 @@ export const baseConfig = {
         '@angular-eslint/prefer-output-readonly': 'error',
         '@angular-eslint/relative-url-prefix': 'error',
         '@angular-eslint/require-localize-metadata': 'error',
-        '@angular-eslint/sort-ngmodule-metadata-arrays': 'error',
         '@angular-eslint/use-component-selector': 'error',
         '@angular-eslint/use-component-view-encapsulation': 'error',
         '@angular-eslint/use-lifecycle-interface': 'error',
@@ -253,7 +251,6 @@ export const baseConfig = {
         ],
         '@typescript-eslint/await-thenable': 'error',
         '@typescript-eslint/ban-ts-comment': 'error',
-        '@typescript-eslint/ban-types': 'error',
         '@typescript-eslint/consistent-type-assertions': [
             'error',
             {
